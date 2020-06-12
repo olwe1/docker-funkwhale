@@ -1,4 +1,4 @@
-FROM alpine:3.10
+FROM arm32v7/alpine:3.10
 MAINTAINER thetarkus
 
 
@@ -6,22 +6,23 @@ MAINTAINER thetarkus
 # Installation
 #
 
-ARG arch=amd64
+ARG arch=armhf
 RUN \
 	echo 'installing dependencies' && \
-	apk add --no-cache \
+	apk add            \
 	shadow             \
 	gettext            \
 	git                \
 	postgresql         \
 	postgresql-contrib \
 	postgresql-dev     \
+  jpeg-dev           \
 	python3-dev        \
 	py3-psycopg2       \
 	py3-pillow         \
 	redis              \
 	nginx              \
-	make              \
+	make               \
 	musl-dev           \
 	gcc                \
 	unzip              \
@@ -59,8 +60,7 @@ RUN \
 	echo 'removing temp files' && \
 	rm /tmp/*.tar.gz
 
-COPY ./src/api/requirements.txt /app/api/requirements.txt
-COPY ./src/api/requirements/ /app/api/requirements/
+COPY ./docker-funkwhale/src/api /app/api
 
 RUN \
 	ln -s /usr/bin/python3 /usr/bin/python && \
@@ -72,11 +72,9 @@ RUN \
 	pip3 install --upgrade pip && \
 	pip3 install setuptools wheel && \
 	pip3 install -r /app/api/requirements.txt && \
-	pip3 install gunicorn uvicorn && \
-	pip3 install service_identity
+	pip3 install gunicorn uvicorn
 
-COPY ./src/api/ /app/api/
-COPY ./src/front /app/front
+COPY ./docker-funkwhale/src/front /app/front
 
 
 #
@@ -96,12 +94,11 @@ ENV FUNKWHALE_HOSTNAME=yourdomain.funkwhale \
 	NGINX_MAX_BODY_SIZE=100M \
 	STATIC_ROOT=/app/api/staticfiles \
 	FUNKWHALE_SPA_HTML_ROOT=/app/front/dist/index.html \
-	FUNKWHALE_WEB_WORKERS=1 \
-	CELERYD_CONCURRENCY=0
+	FUNKWHALE_WEB_WORKERS=1
 #
 # Entrypoint
 #
 
-COPY ./root /
-COPY ./src/funkwhale_nginx.template /etc/nginx/funkwhale_nginx.template
+COPY ./docker-funkwhale/root /
+COPY ./docker-funkwhale/src/funkwhale_nginx.template /etc/nginx/funkwhale_nginx.template
 ENTRYPOINT ["/init"]
