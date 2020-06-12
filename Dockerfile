@@ -9,7 +9,7 @@ MAINTAINER thetarkus
 ARG arch=armhf
 RUN \
 	echo 'installing dependencies' && \
-	apk add            \
+	apk add --no-cache \
 	shadow             \
 	gettext            \
 	git                \
@@ -72,6 +72,7 @@ RUN \
 	pip3 install --upgrade pip && \
 	pip3 install setuptools wheel && \
 	pip3 install -r /app/api/requirements.txt && \
+	pip3 install service_identity
 	pip3 install gunicorn uvicorn
 
 COPY ./docker-funkwhale/src/front /app/front
@@ -94,6 +95,7 @@ ENV FUNKWHALE_HOSTNAME=yourdomain.funkwhale \
 	NGINX_MAX_BODY_SIZE=100M \
 	STATIC_ROOT=/app/api/staticfiles \
 	FUNKWHALE_SPA_HTML_ROOT=/app/front/dist/index.html \
+	CELERYD_CONCURRENCY=0
 	FUNKWHALE_WEB_WORKERS=1
 #
 # Entrypoint
