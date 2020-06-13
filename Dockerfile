@@ -72,7 +72,6 @@ RUN \
 	pip3 install --upgrade pip && \
 	pip3 install setuptools wheel && \
 	pip3 install -r /app/api/requirements.txt && \
-	pip3 install service_identity
 	pip3 install gunicorn uvicorn && \
 	pip3 install service_identity
 
@@ -97,7 +96,7 @@ ENV FUNKWHALE_HOSTNAME=yourdomain.funkwhale \
 	NGINX_MAX_BODY_SIZE=100M \
 	STATIC_ROOT=/app/api/staticfiles \
 	FUNKWHALE_SPA_HTML_ROOT=/app/front/dist/index.html \
-	FUNKWHALE_WEB_WORKERS=1
+	FUNKWHALE_WEB_WORKERS=1 \
 	CELERYD_CONCURRENCY=0
 #
 # Entrypoint
