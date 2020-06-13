@@ -16,7 +16,6 @@ RUN \
 	postgresql         \
 	postgresql-contrib \
 	postgresql-dev     \
-  jpeg-dev           \
 	python3-dev        \
 	py3-psycopg2       \
 	py3-pillow         \
@@ -60,7 +59,8 @@ RUN \
 	echo 'removing temp files' && \
 	rm /tmp/*.tar.gz
 
-COPY ./docker-funkwhale/src/api /app/api
+COPY ./src/api/requirements.txt /app/api/requirements.txt
+COPY ./src/api/requirements/ /app/api/requirements/
 
 RUN \
 	ln -s /usr/bin/python3 /usr/bin/python && \
@@ -73,9 +73,11 @@ RUN \
 	pip3 install setuptools wheel && \
 	pip3 install -r /app/api/requirements.txt && \
 	pip3 install service_identity
-	pip3 install gunicorn uvicorn
+	pip3 install gunicorn uvicorn && \
+	pip3 install service_identity
 
-COPY ./docker-funkwhale/src/front /app/front
+COPY ./src/api/ /app/api/
+COPY ./src/front /app/front
 
 
 #
@@ -95,12 +97,12 @@ ENV FUNKWHALE_HOSTNAME=yourdomain.funkwhale \
 	NGINX_MAX_BODY_SIZE=100M \
 	STATIC_ROOT=/app/api/staticfiles \
 	FUNKWHALE_SPA_HTML_ROOT=/app/front/dist/index.html \
-	CELERYD_CONCURRENCY=0
 	FUNKWHALE_WEB_WORKERS=1
+	CELERYD_CONCURRENCY=0
 #
 # Entrypoint
 #
 
-COPY ./docker-funkwhale/root /
-COPY ./docker-funkwhale/src/funkwhale_nginx.template /etc/nginx/funkwhale_nginx.template
+COPY ./root /
+COPY ./src/funkwhale_nginx.template /etc/nginx/funkwhale_nginx.template
 ENTRYPOINT ["/init"]
