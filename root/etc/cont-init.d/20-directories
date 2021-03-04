@@ -1,13 +1,13 @@
 #!/usr/bin/with-contenv sh
-mkdir /data
+mkdir -p /data
 mkdir -p /run/postgresql
 mkdir -p /run/nginx
 mkdir -p /var/log/funkwhale
 mkdir -p /app/api/staticfiles
 
 # ownership
+chown funkwhale:funkwhale /data
 chown -R funkwhale:funkwhale /app
-chown -R funkwhale:funkwhale /data
 chown -R funkwhale:funkwhale /var/log/funkwhale
 chown -R funkwhale:funkwhale /run/postgresql
 
@@ -19,4 +19,3 @@ chmod 0750 /app
 chmod 0750 /app/api
 
 chmod -R 0755 /var/log/funkwhale
-chmod -R 0755 /data
